@@ -1,103 +1,417 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+    <head>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
 
-    <title>SB Admin 2 - Login</title>
+        <title>SB Admin 2 - Login</title>
 
-    <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+        <!-- Custom fonts for this template-->
+        <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+        <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
 
-    <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+        <!-- Custom styles for this template-->
+        <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
-</head>
+        <!-- Google Sign-In API -->
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-<body class="bg-gradient-primary">
+        <!-- Custom styles for this template-->
+        <style>
+            .bg-gradient-primary {
+                background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+                background-size: cover;
+            }
 
-    <div class="container">
+            .form-control-user {
+                border-radius: 10rem;
+                padding: 1.5rem 1rem;
+            }
 
-        <!-- Outer Row -->
-        <div class="row justify-content-center">
+            .btn-user {
+                border-radius: 10rem;
+                padding: 0.75rem 1rem;
+            }
 
-            <div class="col-xl-10 col-lg-12 col-md-9">
+            /* CENTRAR COMPLETAMENTE EL FORMULARIO EN LA PANTALLA */
+            .login-container {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
 
-                <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
-                        <!-- Nested Row within Card Body -->
-                        <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
-                            <div class="col-lg-6">
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
-                                    </div>
-                                    <form class="user">
-                                        <div class="form-group">
-                                            <input type="email" class="form-control form-control-user"
-                                                id="exampleInputEmail" aria-describedby="emailHelp"
-                                                placeholder="Enter Email Address...">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="password" class="form-control form-control-user"
-                                                id="exampleInputPassword" placeholder="Password">
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <label class="custom-control-label" for="customCheck">Remember
-                                                    Me</label>
-                                            </div>
-                                        </div>
-                                        <a href="index.html" class="btn btn-primary btn-user btn-block">
-                                            Login
-                                        </a>
-                                        <hr>
-                                        <a href="index.html" class="btn btn-google btn-user btn-block">
-                                            <i class="fab fa-google fa-fw"></i> Login with Google
-                                        </a>
-                                        <a href="index.html" class="btn btn-facebook btn-user btn-block">
-                                            <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
-                                        </a>
-                                    </form>
-                                    <hr>
-                                    <div class="text-center">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
-                                    </div>
-                                    <div class="text-center">
-                                        <a class="small" href="register.html">Create an Account!</a>
-                                    </div>
-                                </div>
-                            </div>
+            /* ESTILO PARA EL CARD DEL LOGIN */
+            .login-card {
+                width: 100%;
+                max-width: 400px;
+                border-radius: 1rem;
+                box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            }
+
+            /* MENSAJE DE ERROR ESTILIZADO */
+            .error-message {
+                background-color: #f8d7da;
+                color: #721c24;
+                padding: 0.75rem;
+                border-radius: 0.375rem;
+                border: 1px solid #f5c6cb;
+                margin-bottom: 1rem;
+                display: none;
+            }
+
+            /* SPINNER DE CARGA */
+            .loading-spinner {
+                display: none;
+                width: 1rem;
+                height: 1rem;
+                margin-right: 0.5rem;
+            }
+
+            /* GOOGLE SIGN-IN BUTTON STYLING */
+            .google-signin-container {
+                display: flex;
+                justify-content: center;
+                margin-top: 1rem;
+            }
+        </style>
+
+    </head>
+
+    <body class="bg-gradient-primary">
+
+        <!-- CONTENEDOR PRINCIPAL CENTRADO -->
+        <div class="container-fluid login-container">
+            <div class="login-card">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-5">
+
+                        <!-- CABECERA DEL FORMULARIO -->
+                        <div class="text-center mb-4">
+                            <h1 class="h4 text-gray-900">Bienvenid@ 👤</h1>
+                            <p class="text-muted">Ingresa tus credenciales para acceder</p>
                         </div>
+
+                        <!-- MENSAJE DE ERROR (INICIALMENTE OCULTO) -->
+                        <div id="errorMessage" class="error-message">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span id="errorText">Usuario o contraseña incorrectos</span>
+                        </div>
+
+                        <!-- FORMULARIO DE LOGIN -->
+                        <form id="loginForm">
+
+                            <!-- INPUT DEL DNI -->
+                            <div class="form-group mb-3">
+                                <input type="text" 
+                                       class="form-control form-control-user"
+                                       id="dni" 
+                                       name="dni"
+                                       placeholder="Ingrese su DNI..."
+                                       required>
+                            </div>
+
+                            <!-- INPUT PARA CONTRASEÑA -->
+                            <div class="form-group mb-4">
+                                <input type="password" 
+                                       class="form-control form-control-user"
+                                       id="clave" 
+                                       name="clave"
+                                       placeholder="Ingrese la contraseña..."
+                                       required>
+                            </div>
+
+                            <!-- BOTÓN DE INICIAR SESIÓN -->
+                            <button type="submit" 
+                                    class="btn btn-primary btn-user btn-block w-100 mb-3"
+                                    id="loginBtn">
+                                <span class="spinner-border spinner-border-sm loading-spinner" 
+                                      role="status" aria-hidden="true"></span>
+                                <span id="btnText">Iniciar Sesión</span>
+                            </button>
+                            
+                            <hr>
+                            
+                            <!-- GOOGLE SIGN-IN BUTTON -->
+                            <div class="google-signin-container">
+                                <div id="g_id_signin"></div>
+                            </div>
+                        </form>
+                        
+                        <!-- LOGUEO CON GOOGLE - CONFIGURACIÓN -->
+                        <div id="g_id_onload"
+                             data-client_id="683576227359-a17m87huqbg468fu1tlknkcnru125fl6.apps.googleusercontent.com"
+                             data-callback="handleCredentialResponse"
+                             data-auto_prompt="false">
+                        </div>
+
+                        <!-- ENLACE DE REGISTRO -->
+                        <div class="text-center mt-3">
+                            <a class="small text-decoration-none" href="registro.html">
+                                ¿No tienes cuenta? Regístrate aquí...
+                            </a>
+                        </div>
+
                     </div>
                 </div>
-
             </div>
-
         </div>
 
-    </div>
+        <!-- Bootstrap JavaScript -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <!-- SCRIPT PERSONALIZADO PARA EL LOGIN -->
+        <script>
+            // VARIABLES PARA ALMACENAR DATOS EN MEMORIA
+            let sessionData = {
+                estudianteLogueado: null,
+                isLoggedIn: false
+            };
 
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+            // FUNCIÓN PARA MOSTRAR/OCULTAR SPINNER DE CARGA
+            function toggleLoading(loading) {
+                const spinner = document.querySelector('.loading-spinner');
+                const btnText = document.getElementById('btnText');
+                const loginBtn = document.getElementById('loginBtn');
+                
+                if (loading) {
+                    spinner.style.display = 'inline-block';
+                    btnText.textContent = 'Iniciando...';
+                    loginBtn.disabled = true;
+                } else {
+                    spinner.style.display = 'none';
+                    btnText.textContent = 'Iniciar Sesión';
+                    loginBtn.disabled = false;
+                }
+            }
 
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+            // FUNCIÓN PARA MOSTRAR MENSAJES DE ERROR
+            function mostrarError(mensaje) {
+                const errorDiv = document.getElementById('errorMessage');
+                const errorText = document.getElementById('errorText');
+                errorText.textContent = mensaje;
+                errorDiv.style.display = 'block';
+                
+                // OCULTAR DESPUÉS DE 5 SEGUNDOS
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 5000);
+            }
 
-</body>
+            // FUNCIÓN PARA GUARDAR DATOS DE SESIÓN
+            function guardarSesion(datos) {
+                try {
+                    // Intentar usar sessionStorage
+                    if (typeof Storage !== 'undefined' && sessionStorage) {
+                        sessionStorage.setItem('estudianteLogueado', JSON.stringify(datos.estudianteData));
+                        sessionStorage.setItem('isLoggedIn', 'true');
+                    }
+                    
+                    // También guardar en memoria como respaldo
+                    sessionData.estudianteLogueado = datos.estudianteData;
+                    sessionData.isLoggedIn = true;
+                    
+                    console.log('Datos de sesión guardados:', datos.estudianteData);
+                } catch (error) {
+                    console.error('Error al guardar en sessionStorage:', error);
+                    // Solo usar memoria si sessionStorage falla
+                    sessionData.estudianteLogueado = datos.estudianteData;
+                    sessionData.isLoggedIn = true;
+                }
+            }
 
+            // AGREGAR LISTENER PARA EL SUBMIT DEL FORMULARIO
+            document.getElementById("loginForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+                
+                // OCULTAR MENSAJES DE ERROR PREVIOS
+                document.getElementById('errorMessage').style.display = 'none';
+                
+                // MOSTRAR SPINNER DE CARGA
+                toggleLoading(true);
+
+                const data = {
+                    dni: document.getElementById("dni").value.trim(),
+                    clave: document.getElementById("clave").value.trim()
+                };
+
+                // VALIDAR CAMPOS VACÍOS
+                if (!data.dni || !data.clave) {
+                    toggleLoading(false);
+                    mostrarError('Por favor complete todos los campos');
+                    return;
+                }
+
+                // ENVIAR PETICIÓN AL SERVLET
+                fetch('login', {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error de red: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(json => {
+                    toggleLoading(false);
+                    
+                    if (json.status === "ok") {
+                        // LOGIN EXITOSO - GUARDAR DATOS
+                        const estudianteData = {
+                            logiEstd: json.usuario || data.dni,
+                            dni: data.dni,
+                            loginTime: new Date().getTime() // Timestamp del login
+                        };
+                        
+                        // GUARDAR DATOS DE SESIÓN
+                        guardarSesion({ estudianteData: estudianteData });
+                        
+                        console.log('Login exitoso, redirigiendo...');
+                        
+                        // REDIRIGIR A PÁGINA PRINCIPAL
+                        window.location.href = json.redirect || 'tabla.html';
+                    } else {
+                        // ERROR DE LOGIN
+                        mostrarError(json.message || 'Usuario o contraseña incorrectos');
+                    }
+                })
+                .catch(error => {
+                    toggleLoading(false);
+                    console.error("Error:", error);
+                    mostrarError('Error de conexión. Intente nuevamente.');
+                });
+            });
+
+            // VERIFICAR SI YA HAY UNA SESIÓN ACTIVA AL CARGAR LA PÁGINA
+            window.addEventListener('load', function() {
+                try {
+                    // Solo limpiar si no hay una sesión válida
+                    if (typeof Storage !== 'undefined' && sessionStorage) {
+                        const estudianteLogueado = sessionStorage.getItem('estudianteLogueado');
+                        const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+                        
+                        if (isLoggedIn === 'true' && estudianteLogueado) {
+                            // Ya hay una sesión activa, redirigir
+                            console.log('Sesión activa detectada, redirigiendo...');
+                            window.location.href = 'tabla.html';
+                            return;
+                        }
+                    }
+                    
+                    // Limpiar datos antiguos si no hay sesión válida
+                    if (typeof Storage !== 'undefined' && sessionStorage) {
+                        sessionStorage.clear();
+                    }
+                    sessionData = { estudianteLogueado: null, isLoggedIn: false };
+                } catch (error) {
+                    console.error('Error al verificar sesión:', error);
+                }
+
+                // INICIALIZAR GOOGLE SIGN-IN
+                initializeGoogleSignIn();
+            });
+
+            // VALIDAR SOLO NÚMEROS EN DNI
+            document.getElementById('dni').addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if (this.value.length > 8) {
+                    this.value = this.value.slice(0, 8);
+                }
+            });
+            
+            // FUNCIÓN PARA INICIALIZAR GOOGLE SIGN-IN
+            function initializeGoogleSignIn() {
+                if (typeof google !== 'undefined' && google.accounts) {
+                    google.accounts.id.initialize({
+                        client_id: "683576227359-a17m87huqbg468fu1tlknkcnru125fl6.apps.googleusercontent.com",
+                        callback: handleCredentialResponse
+                    });
+                    
+                    google.accounts.id.renderButton(
+                        document.getElementById("g_id_signin"),
+                        { 
+                            theme: "outline", 
+                            size: "large",
+                            text: "signin_with",
+                            shape: "rectangular"
+                        }
+                    );
+                } else {
+                    // Reintentar después de un breve delay
+                    setTimeout(initializeGoogleSignIn, 500);
+                }
+            }
+            
+            // FUNCIÓN PARA MANEJAR RESPUESTA DE GOOGLE
+            function handleCredentialResponse(response) {
+                console.log('Google credential response:', response);
+                
+                // TOKEN JWT DE GOOGLE - VALIDA AL USUARIO
+                const id_token = response.credential;
+
+                // MOSTRAR INDICADOR DE CARGA
+                mostrarError('Iniciando sesión con Google...');
+
+                // REALIZAR PETICIÓN AL SERVLET (backend) - VALIDAR Y CREAR JWT PROPIO
+                fetch('logingoogle', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({id_token})
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error('Error de red: ' + res.status);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    console.log('Google login response:', data);
+                    
+                    if (data.resultado === 'ok') {
+                        // CREAR TOKEN Y GUARDARLO
+                        setCookie("token", data.token, 7);
+                        
+                        // GUARDAR DATOS DE SESIÓN PARA GOOGLE LOGIN
+                        const estudianteData = {
+                            logiEstd: 'Google User',
+                            email: 'google_user@gmail.com', // Podrías extraer esto del token
+                            loginTime: new Date().getTime(),
+                            loginMethod: 'google'
+                        };
+                        
+                        guardarSesion({ estudianteData: estudianteData });
+                        
+                        // REDIRIGIR
+                        window.location.href = "tabla.html";
+                    } else {
+                        mostrarError('Error en login con Google');
+                    }
+                })
+                .catch(err => {
+                    console.error('Google login error:', err);
+                    mostrarError('Error de conexión con Google. Intente nuevamente.');
+                });
+            }
+
+            // CREA O ACTUALIZA UNA COOKIE - USA NOMBRE, VALOR Y DÍAS
+            function setCookie(nombre, valor, dias) {
+                const fecha = new Date();
+                fecha.setTime(fecha.getTime() + (dias * 24 * 60 * 60 * 1000));
+                const expira = "expires=" + fecha.toUTCString();
+                document.cookie = nombre + "=" + valor + ";" + expira + ";path=/";
+            }
+        </script>
+
+    </body>
 </html>

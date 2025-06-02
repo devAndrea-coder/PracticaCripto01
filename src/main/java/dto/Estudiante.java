@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dto;
 
 import java.io.Serializable;
@@ -36,6 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Estudiante.findByNombEstdWeb", query = "SELECT e FROM Estudiante e WHERE e.nombEstdWeb = :nombEstdWeb"),
     @NamedQuery(name = "Estudiante.findByFechNaciEstdWeb", query = "SELECT e FROM Estudiante e WHERE e.fechNaciEstdWeb = :fechNaciEstdWeb"),
     @NamedQuery(name = "Estudiante.findByLogiEstd", query = "SELECT e FROM Estudiante e WHERE e.logiEstd = :logiEstd"),
+    //VALIDAR
+    @NamedQuery(name = "Estudiante.validarDni", query = "SELECT e FROM Estudiante e WHERE e.ndniEstdWeb = :ndniEstdWeb and e.passEstd = :passEstd"),
     @NamedQuery(name = "Estudiante.findByPassEstd", query = "SELECT e FROM Estudiante e WHERE e.passEstd = :passEstd")})
 public class Estudiante implements Serializable {
 

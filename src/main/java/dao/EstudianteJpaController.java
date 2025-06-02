@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dao;
 
 import dao.exceptions.NonexistentEntityException;
@@ -12,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
@@ -134,4 +131,65 @@ public class EstudianteJpaController implements Serializable {
         }
     }
     
+    // METODO VALIDAR POR DNI
+    public Estudiante validarEstudianteDni(String dni, String pass) {
+        EntityManager em = getEntityManager();
+        try {
+            Query q = em.createNamedQuery("Estudiante.validarDni");
+            q.setParameter("ndniEstdWeb", dni);
+            q.setParameter("passEstd", pass);
+
+            List<Estudiante> lista = q.getResultList();
+
+            if (lista == null || lista.isEmpty()) {
+                return null;
+            } else {
+                return lista.get(0);
+            }
+        } finally {
+            em.close();
+        }
+    }
+    
+    //BUSQUEDA POR DNI
+    public Estudiante buscarPorDniSolo(String dni) {
+        EntityManager em = getEntityManager();
+        try {
+            Query query = em.createQuery("Estudiante.findByNdniEstdWeb");
+            query.setParameter("dni", dni);
+
+            List<Estudiante> resultados = query.getResultList();
+
+            if (resultados.isEmpty()) {
+                return null;
+            }
+
+            return resultados.get(0);
+
+        } catch (NoResultException e) {
+            return null;
+        } catch (Exception e) {
+            System.err.println("Error al buscar estudiante por DNI: " + e.getMessage());
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+    
+    //REGISTRAR NUEVO ESTUDIANTE
+    public boolean registrarEstudianteConHash(Estudiante estudiante, String plainPassword) {
+        try {
+            // Hashear la contraseña antes de guardar
+            String hashedPassword = org.mindrot.jbcrypt.BCrypt.hashpw(plainPassword, org.mindrot.jbcrypt.BCrypt.gensalt(12));
+            estudiante.setPassEstd(hashedPassword);
+
+            // Guardar en la base de datos
+            create(estudiante);
+            return true;
+
+        } catch (Exception e) {
+            System.err.println("Error al registrar estudiante: " + e.getMessage());
+            return false;
+        }
+    }
 }
